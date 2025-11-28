@@ -1,42 +1,123 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Food App - Payment</title>
-<link rel="stylesheet" href="styles.css" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TasteWay — Checkout</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header class="navbar">
-<h1 class="logo">FoodApp</h1>
-<nav>
-<a href="index.html">Home</a>
-<a href="products.html">Products</a>
-</nav>
-</header>
+  <header class="nav">
+    <div class="container nav-inner">
+      <a class="brand" href="index.html">TasteWay</a>
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="products.html">Menu</a>
+        <a href="payment.html">Checkout</a>
+      </nav>
+      <button id="cartBtn" class="cart-btn">Cart (<span class="cart-count">0</span>)</button>
+    </div>
+  </header>
 
+  <main class="container checkout">
+    <h1>Checkout</h1>
+    <div class="checkout-grid">
+      <section class="cart-panel">
+        <h2>Your cart</h2>
+        <div id="cartItems" class="cart-items"></div>
+        <div class="cart-totals">
+          <div>Subtotal: <strong id="subtotal">$0.00</strong></div>
+          <div>Delivery: <strong id="delivery">$2.50</strong></div>
+          <div class="total">Total: <strong id="total">$0.00</strong></div>
+        </div>
+      </section>
 
-<section class="payment-container">
-<h2>Payment Details</h2>
-<form action="thankyou.html" class="payment-form">
-<label>Full Name</label>
-<input type="text" required />
+      <section class="form-panel">
+        <h2>Delivery & Payment</h2>
+        <form id="checkoutForm">
+          <label>Full name <input required name="name" /></label>
+          <label>Phone <input required name="phone" /></label>
+          <label>Address <input required name="address" /></label>
+          <div class="payment-methods">
+            <label><input type="radio" name="method" value="card" checked /> Card</label>
+            <label><input type="radio" name="method" value="cash" /> Cash</label>
+          </div>
+          <button class="btn" type="submit">Place order</button>
+          <p class="muted">Demo — no real payment. Order saved to localStorage.</p>
+        </form>
+      </section>
+    </div>
+  </main>
 
+  <footer class="site-footer">
+    <div class="container">© <span id="year3"></span> TasteWay</div>
+  </footer>
 
-<label>Card Number</label>
-<input type="text" required />
+  <script src="app.js"></script>
+  <script>
+    document.getElementById('year3').textContent = new Date().getFullYear();
+    document.getElementById('cartBtn').addEventListener('click', ()=> location.href = 'payment.html');
 
+    function renderCart(){
+      const items = getCart();
+      const container = document.getElementById('cartItems');
+      container.innerHTML = '';
+      if (!items.length) {
+        container.innerHTML = '<p class="muted">Cart empty. <a href="products.html">Browse menu</a></p>';
+      } else {
+        for (const it of items){
+          const row = document.createElement('div');
+          row.className = 'cart-row';
+          row.innerHTML = `
+            <div class="cart-row-left">
+              <div class="cart-title">${it.title}</div>
+              <div class="muted small">$${it.price.toFixed(2)} × ${it.qty}</div>
+            </div>
+            <div class="cart-row-right">
+              <button class="small-icon dec-btn" data-id="${it.id}">−</button>
+              <span>${it.qty}</span>
+              <button class="small-icon inc-btn" data-id="${it.id}">+</button>
+              <button class="small-icon danger rem-btn" data-id="${it.id}">✕</button>
+            </div>
+          `;
+          container.appendChild(row);
+        }
+      }
+      updateTotals();
+      // attach handlers after render
+      container.querySelectorAll('.inc-btn').forEach(b=>b.addEventListener('click', e=>{ updateQty(e.currentTarget.dataset.id,1); renderCart(); }));
+      container.querySelectorAll('.dec-btn').forEach(b=>b.addEventListener('click', e=>{ updateQty(e.currentTarget.dataset.id,-1); renderCart(); }));
+      container.querySelectorAll('.rem-btn').forEach(b=>b.addEventListener('click', e=>{ removeFromCart(e.currentTarget.dataset.id); renderCart(); }));
+    }
 
-<label>Expiry Date</label>
-<input type="month" required />
+    function updateTotals(){
+      const items = getCart();
+      const subtotal = items.reduce((s,i)=> s + i.price * i.qty, 0);
+      const delivery = items.length ? 2.5 : 0;
+      const total = subtotal + delivery;
+      document.getElementById('subtotal').textContent = $${subtotal.toFixed(2)};
+      document.getElementById('delivery').textContent = $${delivery.toFixed(2)};
+      document.getElementById('total').textContent = $${total.toFixed(2)};
+    }
 
+    renderCart();
 
-<label>CVV</label>
-<input type="password" required />
-
-
-<button type="submit" class="btn">Pay Now</button>
-</form>
-</section>
+    document.getElementById('checkoutForm').addEventListener('submit', function(e){
+      e.preventDefault();
+      const items = getCart();
+      if (!items.length) { alert('Cart is empty. Add items before placing order.'); return; }
+      const form = Object.fromEntries(new FormData(e.target).entries());
+      const subtotal = parseFloat(document.getElementById('subtotal').textContent.replace('$',''));
+      const delivery = parseFloat(document.getElementById('delivery').textContent.replace('$',''));
+      const total = parseFloat(document.getElementById('total').textContent.replace('$',''));
+      const order = { id: 'ORD' + Date.now(), created: new Date().toISOString(), items, totals:{subtotal,delivery,total}, customer:form };
+      localStorage.setItem('lastOrder', JSON.stringify(order));
+      clearCart();
+      refreshCartCount();
+      alert('Order placed! Redirecting to confirmation.');
+      location.href = 'thankyou.html';
+    });
+  </script>
 </body>
 </html>
