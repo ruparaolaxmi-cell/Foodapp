@@ -1,49 +1,97 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Food App - Products</title>
-<link rel="stylesheet" href="styles.css" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TasteWay — Menu</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header class="navbar">
-<h1 class="logo">FoodApp</h1>
-<nav>
-<a href="index.html">Home</a>
-<a href="products.html">Products</a>
-</nav>
-</header>
+  <header class="nav">
+    <div class="container nav-inner">
+      <a class="brand" href="index.html">TasteWay</a>
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="products.html">Menu</a>
+        <a href="payment.html">Checkout</a>
+      </nav>
+      <button id="cartBtn" class="cart-btn">Cart (<span class="cart-count">0</span>)</button>
+    </div>
+  </header>
 
+  <main class="container">
+    <h1>Menu</h1>
+    <p class="lead">Click <em>Add</em> to put items in the cart. Cart persists while navigating.</p>
 
-<section class="product-container">
-<h2 class="section-title">Our Menu</h2>
+    <div class="filter-row">
+      <input id="search" placeholder="Search dishes (optional)" />
+    </div>
 
+    <section id="menu" class="menu-grid"></section>
+  </main>
 
-<div class="product-grid">
-<div class="product-card">
-<img src="pizza.jpg" alt="Pizza" />
-<h3>Pizza</h3>
-<p>$12</p>
-<a class="btn-small" href="payment.html">Buy Now</a>
-</div>
+  <footer class="site-footer">
+    <div class="container">© <span id="year2"></span> TasteWay</div>
+  </footer>
 
+  <script src="app.js"></script>
+  <script>
+    document.getElementById('year2').textContent = new Date().getFullYear();
+    document.getElementById('cartBtn').addEventListener('click', ()=> location.href = 'payment.html');
 
-<div class="product-card">
-<img src="burger.jpg" alt="Burger" />
-<h3>Burger</h3>
-<p>$8</p>
-<a class="btn-small" href="payment.html">Buy Now</a>
-</div>
+    const PRODUCTS = [
+      {id:'p1',title:'Margherita Pizza',price:9.99,img:'https://source.unsplash.com/600x400/?pizza',desc:'Tomato, mozzarella, basil.'},
+      {id:'p2',title:'Pepperoni Pizza',price:11.50,img:'https://source.unsplash.com/600x400/?pepperoni-pizza',desc:'Classic pepperoni.'},
+      {id:'p3',title:'Quinoa Bowl',price:11.50,img:'https://source.unsplash.com/600x400/?bowl',desc:'Quinoa, veggies, tahini.'},
+      {id:'p4',title:'Grilled Chicken Wrap',price:8.50,img:'https://source.unsplash.com/600x400/?wrap',desc:'Chicken, greens.'},
+      {id:'p5',title:'Chocolate Lava Cake',price:5.50,img:'https://source.unsplash.com/600x400/?dessert',desc:'Warm and gooey.'},
+      {id:'p6',title:'Greek Salad',price:7.00,img:'https://source.unsplash.com/600x400/?salad',desc:'Cucumber, feta, olives.'}
+    ];
 
+    const menuEl = document.getElementById('menu');
 
-<div class="product-card">
-<img src="pasta.jpg" alt="Pasta" />
-<h3>Pasta</h3>
-<p>$10</p>
-<a class="btn-small" href="payment.html">Buy Now</a>
-</div>
-</div>
-</section>
+    function render(list){
+      menuEl.innerHTML = '';
+      for (const p of list){
+        const card = document.createElement('article');
+        card.className = 'menu-card';
+        card.innerHTML = `
+          <img src="${p.img}" alt="${p.title}">
+          <div class="menu-card-body">
+            <h3>${p.title}</h3>
+            <p class="muted">${p.desc}</p>
+            <div class="menu-meta">
+              <strong>$${p.price.toFixed(2)}</strong>
+              <div><button class="btn-sm add-btn" data-id="${p.id}">Add</button></div>
+            </div>
+          </div>
+        `;
+        menuEl.appendChild(card);
+      }
+    }
+
+    render(PRODUCTS);
+
+    // delegation: safe and reliable
+    menuEl.addEventListener('click', (e)=>{
+      const b = e.target.closest('.add-btn');
+      if (!b) return;
+      const id = b.getAttribute('data-id');
+      const product = PRODUCTS.find(x=>x.id===id);
+      if (!product) return alert('Product not found');
+      addToCart(product, 1);
+      alert(product.title + ' added to cart');
+    });
+
+    document.getElementById('search').addEventListener('input', (ev)=>{
+      const q = ev.target.value.trim().toLowerCase();
+      const filtered = PRODUCTS.filter(p => p.title.toLowerCase().includes(q) || p.desc.toLowerCase().includes(q));
+      render(filtered);
+    });
+
+    // ensure cart count shows
+    refreshCartCount();
+  </script>
 </body>
 </html>
