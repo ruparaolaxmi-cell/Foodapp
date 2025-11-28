@@ -1,120 +1,25 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>TasteWay — Home</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Food App - Home</title>
+<link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header class="nav">
-    <div class="container nav-inner">
-      <a class="brand" href="index.html">TasteWay</a>
-      <nav>
-        <a href="index.html">Home</a>
-        <a href="products.html">Menu</a>
-        <a href="payment.html">Checkout</a>
-      </nav>
-      <button id="cartBtn" class="cart-btn">Cart (<span id="cartCount">0</span>)</button>
-    </div>
-  </header>
+<header class="navbar">
+<h1 class="logo">FoodApp</h1>
+<nav>
+<a href="index.html">Home</a>
+<a href="products.html">Products</a>
+</nav>
+</header>
 
-  <main>
-    <section class="hero">
-      <div class="container hero-grid">
-        <div class="hero-left">
-          <h1>Fresh meals delivered fast — made with love.</h1>
-          <p class="lead">Curated daily menu, seasonal specials, and comfort classics. Order for delivery or pickup.</p>
-          <div class="hero-actions">
-            <a class="btn" href="products.html">View Menu</a>
-            <a class="btn btn-ghost" href="#how">How it works</a>
-          </div>
-          <ul class="features">
-            <li>✅ Fast delivery</li>
-            <li>🥗 Healthy options</li>
-            <li>🌿 Locally sourced</li>
-          </ul>
-        </div>
-        <div class="hero-right">
-          <img alt="Assorted dishes" src="https://source.unsplash.com/800x600/?food,plate" />
-        </div>
-      </div>
-    </section>
 
-    <section id="how" class="container steps">
-      <h2>How TasteWay works</h2>
-      <div class="step-grid">
-        <div class="step">
-          <h3>Browse menu</h3>
-          <p>Explore categories and pick meals you love.</p>
-        </div>
-        <div class="step">
-          <h3>Customize</h3>
-          <p>Add notes, choose size or spice level at checkout.</p>
-        </div>
-        <div class="step">
-          <h3>Fast delivery</h3>
-          <p>We prepare and deliver hot — or you pick up.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="container highlight">
-      <h2>Popular right now</h2>
-      <div class="cards">
-        <article class="card">
-          <img src="https://source.unsplash.com/400x300/?pizza" alt="Pizza">
-          <div class="card-body">
-            <h4>Margherita Pizza</h4>
-            <p>Classic with fresh basil and tomato.</p>
-            <div class="card-meta">
-              <strong>$9.99</strong>
-              <a class="btn-sm" href="products.html#pizza">Order</a>
-            </div>
-          </div>
-        </article>
-
-        <article class="card">
-          <img src="https://source.unsplash.com/400x300/?bowl" alt="Bowl">
-          <div class="card-body">
-            <h4>Quinoa Bowl</h4>
-            <p>Greens, roasted veggies, tahini drizzle.</p>
-            <div class="card-meta">
-              <strong>$11.50</strong>
-              <a class="btn-sm" href="products.html#bowls">Order</a>
-            </div>
-          </div>
-        </article>
-
-        <article class="card">
-          <img src="https://source.unsplash.com/400x300/?dessert" alt="Dessert">
-          <div class="card-body">
-            <h4>Chocolate Lava Cake</h4>
-            <p>Rich, warm center — serve with ice cream.</p>
-            <div class="card-meta">
-              <strong>$5.50</strong>
-              <a class="btn-sm" href="products.html#desserts">Order</a>
-            </div>
-          </div>
-        </article>
-      </div>
-    </section>
-  </main>
-
-  <footer class="site-footer">
-    <div class="container">
-      <div>© <span id="year"></span> TasteWay — Fresh & Fast</div>
-      <div>Contact: hello@tasteway.example</div>
-    </div>
-  </footer>
-
-  <script src="app.js"></script>
-  <script>
-    // small footer/year script
-    document.getElementById('year').textContent = new Date().getFullYear();
-    // cart button goes to checkout
-    document.getElementById('cartBtn').addEventListener('click', ()=> location.href = 'payment.html');
-  </script>
+<section class="hero">
+<h2>Fresh & Delicious Food Delivered To You</h2>
+<p>Choose from a wide variety of meals prepared with love.</p>
+<a href="products.html" class="btn">Explore Menu</a>
+</section>
 </body>
 </html>
