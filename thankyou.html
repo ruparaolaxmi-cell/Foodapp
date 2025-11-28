@@ -1,59 +1,16 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>TasteWay — Order Confirmed</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Food App - Thank You</title>
+<link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header class="nav">
-    <div class="container nav-inner">
-      <a class="brand" href="index.html">TasteWay</a>
-      <nav>
-        <a href="index.html">Home</a>
-        <a href="products.html">Menu</a>
-        <a href="payment.html">Checkout</a>
-      </nav>
-      <button id="cartBtn" class="cart-btn">Cart (<span id="cartCount">0</span>)</button>
-    </div>
-  </header>
-
-  <main class="container thankyou">
-    <div class="thank-panel">
-      <h1>Thanks — your order is confirmed 🎉</h1>
-      <p id="orderText" class="lead"></p>
-
-      <div id="orderDetails" class="order-details"></div>
-
-      <a class="btn" href="index.html">Back to Home</a>
-    </div>
-  </main>
-
-  <footer class="site-footer">
-    <div class="container">© <span id="year4"></span> TasteWay</div>
-  </footer>
-
-  <script src="app.js"></script>
-  <script>
-    document.getElementById('year4').textContent = new Date().getFullYear();
-    document.getElementById('cartBtn').addEventListener('click', ()=> location.href = 'payment.html');
-
-    const order = JSON.parse(localStorage.getItem('lastOrder') || 'null');
-    const detailEl = document.getElementById('orderDetails');
-    if (!order) {
-      document.getElementById('orderText').textContent = 'No recent order was found.';
-    } else {
-      document.getElementById('orderText').textContent = Order #${order.id} placed on ${new Date(order.created).toLocaleString()}.;
-      let html = <h3>Items</h3><ul>;
-      order.items.forEach(i => html += <li>${i.title} × ${i.qty} — $${(i.price * i.qty).toFixed(2)}</li>);
-      html += </ul><h4>Totals</h4><p>Subtotal: $${order.totals.subtotal.toFixed(2)}</p><p>Delivery: $${order.totals.delivery.toFixed(2)}</p><p><strong>Total: $${order.totals.total.toFixed(2)}</strong></p>;
-      html += <h4>Delivery to</h4><p>${order.customer.name} — ${order.customer.phone}<br>${order.customer.address}</p>;
-      detailEl.innerHTML = html;
-      // optionally remove lastOrder after showing
-      // localStorage.removeItem('lastOrder');
-    }
-  </script>
+<section class="thankyou">
+<h1>Thank You!</h1>
+<p>Your order has been placed successfully.</p>
+<a href="index.html" class="btn">Go Back Home</a>
+</section>
 </body>
 </html>
