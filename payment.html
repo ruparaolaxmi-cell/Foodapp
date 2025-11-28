@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TasteWay — Checkout</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="nav">
+    <div class="container nav-inner">
+      <a class="brand" href="index.html">TasteWay</a>
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="products.html">Menu</a>
+        <a href="payment.html">Checkout</a>
+      </nav>
+      <button id="cartBtn" class="cart-btn">Cart (<span id="cartCount">0</span>)</button>
+    </div>
+  </header>
+
+  <main class="container checkout">
+    <h1>Checkout</h1>
+    <div class="checkout-grid">
+      <section class="cart-panel">
+        <h2>Your cart</h2>
+        <div id="cartItems" class="cart-items"></div>
+        <div class="cart-totals">
+          <div>Subtotal: <strong id="subtotal">$0.00</strong></div>
+          <div>Delivery: <strong id="delivery">$2.50</strong></div>
+          <div class="total">Total: <strong id="total">$0.00</strong></div>
+        </div>
+      </section>
+
+      <section class="form-panel">
+        <h2>Delivery & Payment</h2>
+        <form id="checkoutForm">
+          <label>Full name <input required name="name" /></label>
+          <label>Phone <input required name="phone" /></label>
+          <label>Address <input required name="address" /></label>
+          <label>Notes (optional) <input name="notes" /></label>
+
+          <div class="payment-methods">
+            <label><input type="radio" name="method" value="card" checked /> Card</label>
+            <label><input type="radio" name="method" value="cash" /> Cash on delivery</label>
+          </div>
+
+          <button class="btn" type="submit">Place order</button>
+          <p class="muted">This demo uses a mock checkout — no payment gateway.</p>
+        </form>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">© <span id="year3"></span> TasteWay</div>
+  </footer>
+
+  <script src="app.js"></script>
+  <script>
+    document.getElementById('year3').textContent = new Date().getFullYear();
+    document.getElementById('cartBtn').addEventListener('click', ()=> location.href = 'payment.html');
+
+    // render cart on page
+    function renderCartPanel() {
+      const items = getCart();
+      const container = document.getElementById('cartItems');
+      container.innerHTML = '';
+      if (!items.length) {
+        container.innerHTML = '<p class="muted">Your cart is empty. <a href="products.html">Browse menu</a></p>';
+      } else {
+        items.forEach(it=>{
+          const el = document.createElement('div');
+          el.className = 'cart-row';
+          el.innerHTML = `
+            <div class="cart-row-left">
+              <div class="cart-title">${it.title}</div>
+              <div class="muted small">$${it.price.toFixed(2)} × ${it.qty}</div>
+            </div>
+            <div class="cart-row-right">
+              <button class="small-icon" data-dec="${it.id}">−</button>
+              <span>${it.qty}</span>
+              <button class="small-icon" data-inc="${it.id}">+</button>
+              <button class="small-icon danger" data-rem="${it.id}">✕</button>
+            </div>
+          `;
+          container.appendChild(el);
+        });
+      }
+      updateTotals();
+      // attach quantity controls
+      document.querySelectorAll('[data-inc]').forEach(b=> b.addEventListener('click', e=>{
+        updateQty(e.currentTarget.dataset.inc, 1);
+        renderCartPanel();
+      }));
+      document.querySelectorAll('[data-dec]').forEach(b=> b.addEventListener('click', e=>{
+        updateQty(e.currentTarget.dataset.dec, -1);
+        renderCartPanel();
+      }));
+      document.querySelectorAll('[data-rem]').forEach(b=> b.addEventListener('click', e=>{
+        removeFromCart(e.currentTarget.dataset.rem);
+        renderCartPanel();
+      }));
+    }
+
+    function updateTotals() {
+      const items = getCart();
+      const subtotal = items.reduce((s,i)=> s + i.price * i.qty, 0);
+      const delivery = items.length ? 2.5 : 0;
+      const total = subtotal + delivery;
+      document.getElementById('subtotal').textContent = $${subtotal.toFixed(2)};
+      document.getElementById('delivery').textContent = $${delivery.toFixed(2)};
+      document.getElementById('total').textContent = $${total.toFixed(2)};
+    }
+
+    renderCartPanel();
+
+    // handle checkout submit
+    document.getElementById('checkoutForm').addEventListener('submit', e=>{
+      e.preventDefault();
+      const items = getCart();
+      if (!items.length) {
+        alert('Your cart is empty.');
+        return;
+      }
+      const form = Object.fromEntries(new FormData(e.target).entries());
+      // create an order object in localStorage and clear cart
+      const order = {
+        id: 'ORD' + Date.now(),
+        created: new Date().toISOString(),
+        items,
+        totals: {
+          subtotal: parseFloat(document.getElementById('subtotal').textContent.replace('$','')),
+          delivery: parseFloat(document.getElementById('delivery').textContent.replace('$','')),
+          total: parseFloat(document.getElementById('total').textContent.replace('$','')),
+        },
+        customer: form
+      };
+      localStorage.setItem('lastOrder', JSON.stringify(order));
+      clearCart();
+      refreshCartCount();
+      // go to thank you page
+      location.href = 'thankyou.html';
+    });
+  </script>
+</body>
+</html>
